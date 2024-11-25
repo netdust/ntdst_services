@@ -1,0 +1,83 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "uikit-blocks/section",
+	"title": "Section (UIkit)",
+	"category": "uikit-blocks",
+	"keywords": [ "Section", "UIkit Section", "UIkit" ],
+	"textdomain": "uikit-blocks",
+	"version": "1.0",
+	"allowedBlocks": [ "uikit-blocks/container" ],
+	"attributes": {
+		"generalScrollspy": {
+			"type": "string",
+			"enum": [
+				"",
+				"fade",
+				"scale-up",
+				"scale-down",
+				"slide-top",
+				"slide-bottom",
+				"slide-left",
+				"slide-right",
+				"slide-top-small",
+				"slide-bottom-small",
+				"slide-left-small",
+				"slide-right-small",
+				"slide-top-medium",
+				"slide-bottom-medium",
+				"slide-left-medium",
+				"slide-right-medium",
+				"kenburns",
+				"shake"
+			]
+		},
+		"generalScrollspyDelay": { "type": "string" },
+		"generalTransitionHover": { "type": "boolean" },
+		"style": {
+			"type": "string",
+			"enum": [ "default", "muted", "primary", "secondary", "" ]
+		},
+		"colorMode": { "type": "string", "enum": [ "", "light", "dark" ] },
+		"padding": {
+			"type": "string",
+			"enum": [
+				"",
+				"xsmall",
+				"small",
+				"large",
+				"xlarge",
+				"remove-vertical"
+			]
+		},
+		"paddingRemoveTop": { "type": "boolean" },
+		"paddingRemoveBottom": { "type": "boolean" },
+		"background": { "type": "string" },
+		"backgroundSize": {
+			"type": "string",
+			"enum": [ "", "cover", "contain" ]
+		},
+		"backgroundPosition": {
+			"type": "string",
+			"enum": [
+				"",
+				"top-left",
+				"top-center",
+				"top-right",
+				"center-left",
+				"center-center",
+				"center-right",
+				"bottom-left",
+				"bottom-center",
+				"bottom-right"
+			]
+		},
+		"backgroundRepeat": { "type": "boolean" },
+		"backgroundEffect": {
+			"type": "string",
+			"enum": [ "", "fixed", "parallax" ]
+		},
+		"backgroundParallaxBGX": { "type": "string" },
+		"backgroundParallaxBGY": { "type": "string" }
+	}
+}

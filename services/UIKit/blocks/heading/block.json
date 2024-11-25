@@ -1,0 +1,186 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "uikit-blocks/heading",
+	"title": "Heading (UIkit)",
+	"category": "uikit-blocks",
+	"keywords": [ "Heading", "UIkit Heading", "UIkit" ],
+	"textdomain": "uikit-blocks",
+	"version": "1.0",
+	"attributes": {
+		"generalMargin": {
+			"type": "string",
+			"enum": [
+				"",
+				"small",
+				"default",
+				"medium",
+				"large",
+				"xlarge",
+				"remove-vertical"
+			]
+		},
+		"generalMarginRemoveTop": { "type": "boolean" },
+		"generalMarginRemoveBottom": { "type": "boolean" },
+		"generalTextAlign": {
+			"type": "string",
+			"enum": [ "", "left", "center", "right", "justify" ]
+		},
+		"generalTextAlignBreakpoint": {
+			"type": "string",
+			"enum": [ "", "s", "m", "l", "xl" ]
+		},
+		"generalTextAlignFallback": {
+			"type": "string",
+			"enum": [ "", "left", "center", "right" ]
+		},
+		"generalVisiblity": {
+			"type": "string",
+			"enum": [
+				"",
+				"visible@s",
+				"visible@m",
+				"visible@l",
+				"visible@xl",
+				"hidden@s",
+				"hidden@m",
+				"hidden@l",
+				"hidden@xl"
+			]
+		},
+		"generalPosition": {
+			"type": "string",
+			"enum": [ "", "relative", "absolute" ]
+		},
+		"generalPositionLeft": { "type": "integer" },
+		"generalPositionRight": { "type": "integer" },
+		"generalPositionTop": { "type": "integer" },
+		"generalPositionBottom": { "type": "integer" },
+		"generalPositionZIndex": { "type": "integer" },
+		"generalEffect": {
+			"type": "string",
+			"enum": [ "", "animation", "transition", "parallax" ]
+		},
+		"generalAnimation": {
+			"type": "string",
+			"enum": [
+				"",
+				"inherit",
+				"fade",
+				"scale-up",
+				"scale-down",
+				"slide-top",
+				"slide-bottom",
+				"slide-left",
+				"slide-right",
+				"slide-top-small",
+				"slide-bottom-small",
+				"slide-left-small",
+				"slide-right-small",
+				"slide-top-medium",
+				"slide-bottom-medium",
+				"slide-left-medium",
+				"slide-right-medium"
+			],
+			"default": ""
+		},
+		"generalTransition": {
+			"type": "string",
+			"enum": [
+				"",
+				"fade",
+				"scale-up",
+				"scale-down",
+				"slide-top",
+				"slide-bottom",
+				"slide-left",
+				"slide-right",
+				"slide-top-small",
+				"slide-bottom-small",
+				"slide-left-small",
+				"slide-right-small",
+				"slide-top-medium",
+				"slide-bottom-medium",
+				"slide-left-medium",
+				"slide-right-medium"
+			],
+			"default": ""
+		},
+		"generalParallaxX": { "type": "string" },
+		"generalParallaxY": { "type": "string" },
+		"generalParallaxScale": { "type": "string" },
+		"generalParallaxRotate": { "type": "string" },
+		"generalParallaxOpacity": { "type": "string" },
+		"generalParallaxBlur": { "type": "string" },
+		"generalParallaxOrigin": {
+			"type": "string",
+			"enum": [
+				"top-left",
+				"top-center",
+				"top-right",
+				"center-left",
+				"",
+				"center-right",
+				"bottom-left",
+				"bottom-center",
+				"bottom-right"
+			],
+			"default": ""
+		},
+		"generalParallaxEasing": { "type": "string" },
+		"generalParallaxBreakpoint": {
+			"type": "string",
+			"enum": [ "", "s", "m", "l", "xl" ]
+		},
+		"generalParallaxCustom": { "type": "string" },
+		"text": { "type": "string" },
+		"tag": {
+			"type": "string",
+			"enum": [ "h1", "h2", "h3", "h4", "h5", "h6", "div" ],
+			"default": "h1"
+		},
+		"style": {
+			"type": "string",
+			"enum": [
+				"",
+				"heading-3xlarge",
+				"heading-2xlarge",
+				"heading-xlarge",
+				"heading-large",
+				"heading-medium",
+				"heading-small",
+				"h1",
+				"h2",
+				"h3",
+				"h4",
+				"h5",
+				"h6",
+				"text-meta",
+				"text-lead",
+				"text-small",
+				"text-large"
+			],
+			"default": ""
+		},
+		"decoration": {
+			"type": "string",
+			"enum": [ "", "divider", "bullet", "line" ],
+			"default": ""
+		},
+		"color": {
+			"type": "string",
+			"enum": [
+				"",
+				"muted",
+				"emphasis",
+				"primary",
+				"secondary",
+				"success",
+				"warning",
+				"danger",
+				"background"
+			],
+			"default": ""
+		}
+	}
+}
