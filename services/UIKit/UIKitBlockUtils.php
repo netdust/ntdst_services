@@ -250,7 +250,7 @@ class UIKitBlockUtils {
                 continue;
             }
 
-            $path = UIKIT_BLOCKS_PATH . "/{$template_name}";
+            $path = "/{$template_name}";
 
             if ( file_exists( $path ) ) {
                 $located = $path;

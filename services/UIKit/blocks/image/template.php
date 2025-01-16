@@ -9,12 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Netdust\Services\Yootheme\blocks\Utils;
-
 $attributes         = $arguments['attributes'];
 $general_attributes = $arguments['general_attributes'];
 
-$wrapper_attributes = Utils::attributes_merge(
+$wrapper_attributes = \Netdust\Services\UIKit\UIKitBlockUtils::attributes_merge(
 	$general_attributes,
 	array(
 		'data-uk-lightbox' => 'lightbox' === $attributes['target'],
@@ -60,15 +58,15 @@ $image_attributes = array(
 	),
 );
 
-$prepared_wrapper_attributes = Utils::prepare_wrapper_attributes( $wrapper_attributes );
+$prepared_wrapper_attributes = \Netdust\Services\UIKit\UIKitBlockUtils::prepare_wrapper_attributes( $wrapper_attributes );
 
 ?>
-<div <?php echo wp_kses_data( get_block_wrapper_attributes( $prepared_wrapper_attributes[0] ) ); ?><?php Utils::attributes( $prepared_wrapper_attributes[1], true ); ?>>
+<div <?php echo wp_kses_data( get_block_wrapper_attributes( $prepared_wrapper_attributes[0] ) ); ?><?php \Netdust\Services\UIKit\UIKitBlockUtils::attributes( $prepared_wrapper_attributes[1], true ); ?>>
 	<?php if ( $attributes['url'] ) : ?>
-		<a <?php Utils::attributes( $a_attributes ); ?>>
-			<img <?php Utils::attributes( $image_attributes ); ?>>
+		<a <?php \Netdust\Services\UIKit\UIKitBlockUtils::attributes( $a_attributes ); ?>>
+			<img <?php \Netdust\Services\UIKit\UIKitBlockUtils::attributes( $image_attributes ); ?>>
 		</a>
 	<?php else : ?>
-		<img <?php Utils::attributes( $image_attributes ); ?>>
+		<img <?php \Netdust\Services\UIKit\UIKitBlockUtils::attributes( $image_attributes ); ?>>
 	<?php endif; ?>
 </div>

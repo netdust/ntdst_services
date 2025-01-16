@@ -2,6 +2,8 @@
 
 namespace Netdust\Services\UIKit;
 
+use Netdust\Logger\Logger;
+
 class UIKitBlock extends \Netdust\Service\Blocks\Block {
 
     protected array $json;
@@ -49,7 +51,7 @@ class UIKitBlock extends \Netdust\Service\Blocks\Block {
             'content'            => $content,
         );
 
-        return UIKitBlockUIKitBlockUtils::view( $slug, null, $arguments, true );
+        return UIKitBlockUtils::view( $slug, null, $arguments, true );
     }
 
     /**

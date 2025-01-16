@@ -9,7 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Netdust\Services\Yootheme\blocks\Utils;
 
 $attributes         = $arguments['attributes'];
 $general_attributes = $arguments['general_attributes'];
@@ -108,25 +107,25 @@ $overlay_attributes = array(
 	),
 );
 
-$prepared_wrapper_attributes = Utils::prepare_wrapper_attributes( $wrapper_attributes );
+$prepared_wrapper_attributes = \Netdust\Services\UIKit\UIKitBlockUtils::prepare_wrapper_attributes( $wrapper_attributes );
 
 ?>
-<div <?php echo wp_kses_data( get_block_wrapper_attributes( $prepared_wrapper_attributes[0] ) ); ?><?php Utils::attributes( $prepared_wrapper_attributes[1], true ); ?>>
+<div <?php echo wp_kses_data( get_block_wrapper_attributes( $prepared_wrapper_attributes[0] ) ); ?><?php \Netdust\Services\UIKit\UIKitBlockUtils::attributes( $prepared_wrapper_attributes[1], true ); ?>>
 
 	<div class="uk-inline-clip uk-transition-toggle">
 
-		<img <?php Utils::attributes( $image_attributes ); ?>>
+		<img <?php \Netdust\Services\UIKit\UIKitBlockUtils::attributes( $image_attributes ); ?>>
 
 		<?php if ( $hover_image ) : ?>
-			<img <?php Utils::attributes( $hover_image_attributes ); ?>>
+			<img <?php \Netdust\Services\UIKit\UIKitBlockUtils::attributes( $hover_image_attributes ); ?>>
 		<?php endif; ?>
 
 		<?php if ( 'cover' === $attributes['overlayMode'] ) : ?>
-			<div <?php Utils::attributes( $cover_attributes ); ?>></div>
+			<div <?php \Netdust\Services\UIKit\UIKitBlockUtils::attributes( $cover_attributes ); ?>></div>
 		<?php endif; ?>
 
-		<div <?php Utils::attributes( $position_attributes ); ?>>
-			<div <?php Utils::attributes( $overlay_attributes ); ?>>
+		<div <?php \Netdust\Services\UIKit\UIKitBlockUtils::attributes( $position_attributes ); ?>>
+			<div <?php \Netdust\Services\UIKit\UIKitBlockUtils::attributes( $overlay_attributes ); ?>>
 				<?php
 				echo $arguments['content']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				?>
@@ -134,7 +133,7 @@ $prepared_wrapper_attributes = Utils::prepare_wrapper_attributes( $wrapper_attri
 		</div>
 
 		<?php if ( ! empty( $attributes['url'] ) ) : ?>
-			<a <?php Utils::attributes( $a_attributes ); ?>></a>
+			<a <?php \Netdust\Services\UIKit\UIKitBlockUtils::attributes( $a_attributes ); ?>></a>
 		<?php endif; ?>
 
 	</div>

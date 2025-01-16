@@ -4,6 +4,7 @@
 	"name": "uikit-blocks/button",
 	"title": "Button (UIkit)",
 	"category": "uikit-blocks",
+	"icon": "button",
 	"keywords": [ "Button", "UIkit Button", "UIkit" ],
 	"textdomain": "uikit-blocks",
 	"version": "1.0",

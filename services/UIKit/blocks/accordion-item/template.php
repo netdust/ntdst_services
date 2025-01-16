@@ -9,12 +9,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Netdust\Services\Yootheme\blocks\Utils;
 
 $attributes         = $arguments['attributes'];
 $general_attributes = $arguments['general_attributes'];
 
-$wrapper_attributes = Utils::attributes_merge(
+$wrapper_attributes = \Netdust\Services\UIKit\UIKitBlockUtils::attributes_merge(
 	$general_attributes,
 	array(
 		'class' => array(
@@ -23,10 +22,10 @@ $wrapper_attributes = Utils::attributes_merge(
 	)
 );
 
-$prepared_wrapper_attributes = Utils::prepare_wrapper_attributes( $wrapper_attributes );
+$prepared_wrapper_attributes = \Netdust\Services\UIKit\UIKitBlockUtils::prepare_wrapper_attributes( $wrapper_attributes );
 
 ?>
-<li <?php echo wp_kses_data( get_block_wrapper_attributes( $prepared_wrapper_attributes[0] ) ); ?><?php Utils::attributes( $prepared_wrapper_attributes[1], true ); ?>>
+<li <?php echo wp_kses_data( get_block_wrapper_attributes( $prepared_wrapper_attributes[0] ) ); ?><?php \Netdust\Services\UIKit\UIKitBlockUtils::attributes( $prepared_wrapper_attributes[1], true ); ?>>
 	<a class="uk-accordion-title" href="#"><?php echo wp_kses_data( $attributes['title'] ); ?></a>
 	<div class="uk-accordion-content">
 		<?php echo $arguments['content']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

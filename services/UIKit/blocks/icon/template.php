@@ -9,12 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Netdust\Services\Yootheme\blocks\Utils;
-
 $attributes         = $arguments['attributes'];
 $general_attributes = $arguments['general_attributes'];
 
-$wrapper_attributes = Utils::attributes_merge(
+$wrapper_attributes = \Netdust\Services\UIKit\UIKitBlockUtils::attributes_merge(
 	$general_attributes,
 	array(
 		'data-uk-lightbox' => 'lightbox' === $attributes['target'],
@@ -35,7 +33,7 @@ $icon_attributes = array(
 	'data-type'    => array(
 		$attributes['lightboxType'] => ( 'lightbox' === $attributes['target'] ) && $attributes['lightboxType'],
 	),
-	'data-uk-icon' => Utils::attribute_value(
+	'data-uk-icon' => \Netdust\Services\UIKit\UIKitBlockUtils::attribute_value(
 		array(
 			"icon: {$attributes['icon']};"   => $attributes['icon'],
 			'icon: star;'                    => ! $attributes['icon'],
@@ -48,9 +46,9 @@ $icon_attributes = array(
 
 $tag_name = $attributes['url'] ? 'a' : 'span';
 
-$prepared_wrapper_attributes = Utils::prepare_wrapper_attributes( $wrapper_attributes );
+$prepared_wrapper_attributes = \Netdust\Services\UIKit\UIKitBlockUtils::prepare_wrapper_attributes( $wrapper_attributes );
 
 ?>
-<div <?php echo wp_kses_data( get_block_wrapper_attributes( $prepared_wrapper_attributes[0] ) ); ?><?php Utils::attributes( $prepared_wrapper_attributes[1], true ); ?>>
-	<<?php echo tag_escape( $tag_name ); ?> <?php Utils::attributes( $icon_attributes ); ?>></<?php echo tag_escape( $tag_name ); ?>>
+<div <?php echo wp_kses_data( get_block_wrapper_attributes( $prepared_wrapper_attributes[0] ) ); ?><?php \Netdust\Services\UIKit\UIKitBlockUtils::attributes( $prepared_wrapper_attributes[1], true ); ?>>
+	<<?php echo tag_escape( $tag_name ); ?> <?php \Netdust\Services\UIKit\UIKitBlockUtils::attributes( $icon_attributes ); ?>></<?php echo tag_escape( $tag_name ); ?>>
 </div>

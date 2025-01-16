@@ -30,21 +30,21 @@ class UIKitServiceProvider extends ServiceProvider
 
             // React-jsx-runtime polyfill.
             if ( ! wp_script_is( 'react-jsx-runtime', 'registered' ) ) {
-                $asset =  $this->container->get( File::class )->asset_url( 'js', 'admin/react-jsx-runtime.js' );
+                $asset = plugin_dir_url( __FILE__ ).  'assets/admin/js/react-jsx-runtime.js';
                 $this->container->get( AssetManager::class )->script(
-                    'react-jsx-runtime', $asset,  ['deps'=> ['react'], 'ver'=>'0.1'], true
+                    'react-jsx-runtime', $asset,  ['to'=>['admin'],'deps'=> ['react'], 'ver'=>'0.1'], true
                 );
             }
 
             // Editor css.
-            $asset =  $this->container->get( File::class )->asset_url( 'js', 'admin/editor.js' );
+            $asset =  plugin_dir_url( __FILE__ ) .  'assets/admin/js/editor.js';
             $this->container->get( AssetManager::class )->script(
-                'uikit-blocks-editor-js', $asset,  ['deps'=> ['react-jsx-runtime', 'wp-block-editor', 'wp-blocks', 'wp-components', 'wp-core-data', 'wp-data', 'wp-date', 'wp-element', 'wp-i18n', 'wp-notices', 'wp-primitives'], 'ver'=>'0.1'], true
+                'uikit-blocks-editor-js', $asset,  ['to'=>['admin'],'deps'=> ['react-jsx-runtime', 'wp-block-editor', 'wp-blocks', 'wp-components', 'wp-core-data', 'wp-data', 'wp-date', 'wp-element', 'wp-i18n', 'wp-notices', 'wp-primitives'], 'ver'=>'0.1'], true
             );
 
-            $asset =  $this->container->get( File::class )->asset_url( 'css', 'admin/editor.css' );
-            $this->container->get( AssetManager::class )->script(
-                'uikit-blocks-editor-css', $asset,  ['deps'=> [], 'ver'=>'0.1'], true
+            $asset =   plugin_dir_url( __FILE__ ).  'assets/admin/css/editor.css';
+            $this->container->get( AssetManager::class )->style(
+                'uikit-blocks-editor-css', $asset,  ['to'=>['admin'],'ver'=>'0.1'], true
             );
 
         }

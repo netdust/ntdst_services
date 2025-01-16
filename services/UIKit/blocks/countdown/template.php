@@ -9,15 +9,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Netdust\Services\Yootheme\blocks\Utils;
-
-
 $attributes         = $arguments['attributes'];
 $general_attributes = $arguments['general_attributes'];
 
 $date = isset( $attributes['date'] ) ? $attributes['date'] : '';
 
-$wrapper_attributes = Utils::attributes_merge(
+$wrapper_attributes = \Netdust\Services\UIKit\UIKitBlockUtils::attributes_merge(
 	$general_attributes,
 	array(
 		'class'             => array(
@@ -29,7 +26,7 @@ $wrapper_attributes = Utils::attributes_merge(
 			"uk-grid-row-{$attributes['rowGap']}"       => $attributes['rowGap'] && $attributes['columnGap'] !== $attributes['rowGap'],
 		),
 		'data-uk-grid'      => true,
-		'data-uk-countdown' => Utils::attribute_value(
+		'data-uk-countdown' => \Netdust\Services\UIKit\UIKitBlockUtils::attribute_value(
 			array(
 				"date: {$date};" => $date,
 			),
@@ -38,10 +35,10 @@ $wrapper_attributes = Utils::attributes_merge(
 	)
 );
 
-$prepared_wrapper_attributes = Utils::prepare_wrapper_attributes( $wrapper_attributes );
+$prepared_wrapper_attributes = \Netdust\Services\UIKit\UIKitBlockUtils::prepare_wrapper_attributes( $wrapper_attributes );
 
 ?>
-<div <?php echo wp_kses_data( get_block_wrapper_attributes( $prepared_wrapper_attributes[0] ) ); ?><?php Utils::attributes( $prepared_wrapper_attributes[1], true ); ?>>
+<div <?php echo wp_kses_data( get_block_wrapper_attributes( $prepared_wrapper_attributes[0] ) ); ?><?php \Netdust\Services\UIKit\UIKitBlockUtils::attributes( $prepared_wrapper_attributes[1], true ); ?>>
 
 	<div>
 		<div class="uk-countdown-number uk-countdown-days"></div>
