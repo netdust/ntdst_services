@@ -2,11 +2,9 @@
 
 namespace Netdust\Services\UIKit;
 
-use Netdust\Services\UIKit\UIKitBlockUtils;
-
 class UIKitBlock extends \Netdust\Service\Blocks\Block {
 
-    protected string $json;
+    protected array $json;
 
     protected function getBlockPath(): string
     {

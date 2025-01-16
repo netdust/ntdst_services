@@ -3,7 +3,9 @@
 namespace Netdust\Services\PostFilter;
 
 
+use Netdust\Core\File;
 use Netdust\Core\ServiceProvider;
+use Netdust\Http\URL;
 use Netdust\Service\Assets\AssetManager;
 
 class PostFilter
@@ -70,11 +72,18 @@ class PostFilter
     }
 
     public function register(): void {
+
+        // we need to make this conditional
+        add_filter('term_link', function($link, $term, $taxonomy) {
+            $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $taxonomy)));
+            return URL::basePath() . '/?'.$slug.'='.$term->slug;
+        }, 10, 3);
+
         add_action( 'wp_head', [$this,'add_noindexmeta_tags']);
         $this->add_ajax();
     }
 
-    protected function do_query( array $filter ): void {
+    protected function do_query( array $filter ): string {
 
         $taxonomies = $this->get_taxonomies();
         $metas = $this->get_metas();
@@ -93,7 +102,7 @@ class PostFilter
             wp_reset_postdata();
             wp_reset_query();
 
-            $result_html = $this->provider->render( $this->get( 'filter_result', 'filter_result' ), [
+            $result_html = $this->provider->app()->render( $this->get( 'filter_result', 'filter_result' ), [
                 'results'=> $query,
             ]);
 
@@ -108,7 +117,7 @@ class PostFilter
         }
         else {
 
-            $this->provider->print( $this->get( 'name' ), [
+            return $this->provider->render( $this->get( 'name' ), [
                 'taxonomies'=>$taxonomies,
                 'metas'=>$metas,
                 'results'=>$query,
@@ -117,7 +126,6 @@ class PostFilter
             ] );
 
         }
-
     }
 
     public function custom_pagination( $total_pages, $posttype ) {
@@ -218,7 +226,9 @@ class PostFilter
         echo $this->filter_products();
     }
 
-    public function filter_products() {
+    public function filter_products(): string {
+
+        do_action( 'postfilter:before_filter', $this );
 
         $this->taxonomies = $this->get_taxonomies( );
         $this->enqueue( );
@@ -284,7 +294,7 @@ class PostFilter
             }
         endforeach;
 
-        return $taxonomies;
+        return apply_filters( 'postfilter:get_taxonomies', $taxonomies );
     }
 
     public function get_metas( ){
@@ -298,7 +308,7 @@ class PostFilter
             }
         }
 
-        return $filters_arr;
+        return apply_filters( 'postfilter:get_metas', $filters_arr );
     }
 
     /**
@@ -323,7 +333,7 @@ class PostFilter
             }
         }
 
-        return $filters_arr;
+        return apply_filters( 'postfilter:get_filters', $filters_arr );
     }
 
     /**
@@ -343,14 +353,17 @@ class PostFilter
             };
         }
 
-        return array_merge($filters, $_REQUEST['filter'] ?? $_GET );
+        return apply_filters( 'postfilter:get_query', array_merge($filters, $_REQUEST['filter'] ?? $_GET ) );
     }
 
     public function enqueue( ): void {
         // enqueue and localize script
-        $script = $this->container->get( AssetManager::class )->get( 'filter-js' );
+        $asset = $this->provider->app( File::class )->asset_url( 'js', 'filter.js' );
+        $script = $this->provider->app( AssetManager::class )->script(
+            'filter-js', $asset,  ['deps'=> ['jquery'], 'ver'=>'0.1'], false
+        );
 
-        $script->setLocalization( 'bs_data', [
+        $script->setLocalization( 'vad_data', [
             'filters'=> json_encode( $this->get_filters() ),
             'metas'=> json_encode( $this->get_metas() ),
             'query_args' => $this->get( 'query_args' ),
