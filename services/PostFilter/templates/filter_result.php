@@ -22,7 +22,7 @@ if($results->have_posts()) {
         $term_obj_list = get_the_terms( get_the_ID(), 'onderwerp' );
         $terms_string =  join(', ', wp_list_pluck($term_obj_list, 'name'));
 
-        echo $template->get_template('filter_resultitem', [
+        echo $template->render('filter_resultitem', [
             'title'=>get_the_title(),
             'content'=>get_the_content(),
             'excerpt'=>get_the_excerpt(),

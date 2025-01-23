@@ -18,13 +18,13 @@ $layout  = $template->get_param('layout', null );
 
 
 
-<?= $template->get_template( 'filter_dropdown', [ 'taxonomies'=>$taxonomies, 's'=>$s ] ); ?>
+<?= $template->render( 'filter_dropdown', [ 'taxonomies'=>$taxonomies, 's'=>$s ] ); ?>
 
 <div class="uk-text-meta uk-text-emphasis uk-heading-line uk-text-center uk-margin-large"><span>Gevonden aantal resultaten: <span id="result-count"><?= $results->found_posts; ?></span></span></div>
 
 <div class="ntdst-filter-results filter-wrapper uk-margin-large-top">
 
-    <?= $template->get_template( 'filter_result', [ 'results'=>$results, 'layout'=>$layout ] ); ?>
+    <?= $template->render( 'filter_result', [ 'results'=>$results, 'layout'=>$layout ] ); ?>
 
 </div>
 

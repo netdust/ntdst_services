@@ -7,9 +7,11 @@ use Netdust\Core\File;
 use Netdust\Core\ServiceProvider;
 use Netdust\Http\URL;
 use Netdust\Service\Assets\AssetManager;
+use Netdust\Traits\Setters;
 
 class PostFilter
 {
+    use Setters;
 
     protected ServiceProvider $provider;
 
@@ -117,7 +119,8 @@ class PostFilter
         }
         else {
 
-            return $this->provider->render( $this->get( 'name' ), [
+
+            return $this->provider->render( 'filter', [
                 'taxonomies'=>$taxonomies,
                 'metas'=>$metas,
                 'results'=>$query,

@@ -16,13 +16,17 @@ class PostFilterServiceProvider extends ServiceProvider
 
     public function register() {
         // make template methods easly avialable
-        $this->container->get( TemplateServiceProvider::class )->template_mixin( $this, dirname(__FILE__ ) );
+        $this->container->get( TemplateServiceProvider::class )->add(dirname(__FILE__ ).'/templates/' );
+        $this->container->get( TemplateServiceProvider::class )->template_mixin( $this );
+
         //$this->make( 'post_filter',  ['post_type'=>'post','exclude_cat'=>'category,language'] );
     }
 
     public function boot() {
 
+
         add_shortcode( 'post_filter', function( array $atts, string $content = ""  )  {
+
             if( !empty( $atts['name'] ) ) {
                 ob_start();
 
