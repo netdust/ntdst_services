@@ -195,7 +195,7 @@ class Group
 	 * @return \BracketSpace\Notification\Utils\Settings\Group $this
 	 * @throws \Exception Exception.
 	 */
-	public function addField($args)
+	public function addField($args): Group
 	{
 		if (!isset($args['name'], $args['slug'], $args['render'])) {
 			throw new \Exception('You must define field name, slug and render callback');

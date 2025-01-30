@@ -6,12 +6,13 @@ namespace Netdust\Services\PostFilter;
 use Netdust\Core\File;
 use Netdust\Core\ServiceProvider;
 use Netdust\Http\URL;
+use Netdust\Logger\Logger;
 use Netdust\Service\Assets\AssetManager;
 use Netdust\Traits\Setters;
 
 class PostFilter
 {
-    use Setters;
+    //use Setters;
 
     protected ServiceProvider $provider;
 
@@ -23,6 +24,7 @@ class PostFilter
     public string $publish = '';
     public array $order_by = [];
     public string $exclude_cat = '';
+    public string $template = '';
     private string $action = 'post_filter';
     private string $nonce = 'post_filter_nonce';
 
@@ -99,12 +101,19 @@ class PostFilter
             $this->get( 'post_type' )
         );
 
+        $prefix = $this->get( 'template', '' );
+
         if( is_admin() && defined('DOING_AJAX') && DOING_AJAX ) {
 
             wp_reset_postdata();
             wp_reset_query();
 
-            $result_html = $this->provider->app()->render( $this->get( 'filter_result', 'filter_result' ), [
+            $template = 'filter_result';
+            if( $this->provider->exists( $prefix . $template ) ) {
+                $template = $prefix . $template;
+            }
+
+            $result_html = $this->provider->render( $template, [
                 'results'=> $query,
             ]);
 
@@ -119,8 +128,13 @@ class PostFilter
         }
         else {
 
+            $template = 'filter';
 
-            return $this->provider->render( 'filter', [
+            if( $this->provider->exists( $prefix . $template ) ) {
+                $template = $prefix . $template;
+            }
+            
+            return $this->provider->render(  $template, [
                 'taxonomies'=>$taxonomies,
                 'metas'=>$metas,
                 'results'=>$query,
@@ -226,6 +240,7 @@ class PostFilter
     }
 
     public function echo_template(): void {
+        $this->set( $this->query_args );  // if we have query_args set them now or it's to late
         echo $this->filter_products();
     }
 
@@ -254,7 +269,7 @@ class PostFilter
 
     }
 
-    public function filter_products_ajax() {
+    public function filter_products_ajax(): void {
         check_ajax_referer( $this->action );
         $this->query_args = $_REQUEST['query_args'];
         $this->set( $this->query_args );
@@ -376,6 +391,33 @@ class PostFilter
         ]);
 
         $script->register();
+    }
+
+    //search ACF fields
+    public function search_custom_meta_acf_alter_search($search,$qry) {
+        global $wpdb;
+        remove_filter('posts_search',[$this,'search_custom_meta_acf_alter_search'],1);
+        $add = $wpdb->prepare("(CAST(CMS15.meta_value AS CHAR) LIKE '%%%s%%')", $qry->get( 's' ) );
+        $search = preg_replace('|\(\((.+)\)\)|','(($1 OR '.$add.'))',$search);
+
+        return $search;
+    }
+
+    public function search_custom_meta_acf_add_join($joins,$qry) {
+        global $wpdb;
+        remove_filter('posts_join',[$this,'search_custom_meta_acf_add_join']);
+        return $joins . " INNER JOIN {$wpdb->postmeta} as CMS15 ON ({$wpdb->posts}.ID = CMS15.post_id)";
+    }
+
+    public function search_custom_meta_acf_distinct($distinct,$qry) {
+        remove_filter('posts_distinct',[$this,'search_custom_meta_acf_distinct']);
+        return "DISTINCT";
+    }
+
+    public function modify_acf_relationship_search_query( ) {
+        add_filter('posts_join',[$this,'search_custom_meta_acf_add_join'],999,2);
+        add_filter('posts_search',[$this,'search_custom_meta_acf_alter_search'],999,2);
+        add_filter('posts_distinct', [$this,'search_custom_meta_acf_distinct'],999,2);
     }
 
 }

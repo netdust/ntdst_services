@@ -349,7 +349,7 @@ class Settings
                         $this->args['position']
                     );
                 }
-            });
+            },9);
         }
 
 

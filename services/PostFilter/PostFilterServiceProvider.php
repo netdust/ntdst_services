@@ -32,6 +32,7 @@ class PostFilterServiceProvider extends ServiceProvider
 
                 $filter = $this->container->get( $atts['name'] );
                 $filter->query_args = $atts;
+
                 $filter->echo_template();
 
                 $html = ob_get_contents();
@@ -40,14 +41,16 @@ class PostFilterServiceProvider extends ServiceProvider
             }
 
             return '';
+
         });
 
     }
 
     public function make( string $name, array $param ): PostFilter {
+        $factory = $param['class'] ?? PostFilter::class;
         $this->container->singleton(
             $name,
-            new PostFilter( $this, $param ), ['register']
+            new $factory( $this, $param ), ['register']
         );
         return $this->container->get( $name );
     }
