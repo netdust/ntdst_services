@@ -32,14 +32,14 @@ window.vad = window.vad || {};
             this.metas = {};
             this.filters = {};
 
-            if( bs_data.metas !== '[]' ) {
-                this.metas = JSON.parse(bs_data.metas, (key,value) => {
+            if( filter_data.metas !== '[]' ) {
+                this.metas = JSON.parse(filter_data.metas, (key,value) => {
                     return value;
                 });
             }
 
-            if( bs_data.filters !== '[]' ) {
-                this.filters = JSON.parse(bs_data.filters, (key,value) => {
+            if( filter_data.filters !== '[]' ) {
+                this.filters = JSON.parse(filter_data.filters, (key,value) => {
                     return value;
                 });
             }
@@ -125,11 +125,19 @@ window.vad = window.vad || {};
 
         editFilterLabels: function( category ) {
             $('.filter-active').empty();
+
             if( this.filters.hasOwnProperty(category) && this.filters[category] != null ) {
                 Object.entries(this.filters[category]).forEach(([key, value]) => {
                     $('#tax-'+category+' a.filter-item[data-term="'+key+'"]').addClass('uk-active');
-                    $('.filter-active' ).append('<li><a class="remove-filter-item" data-cat="'+category+'" data-term="'+key+'" data-label="'+value+'">'+ value +'<span class="uk-margin-small-left uk-icon" uk-icon="close"></span></a></li>');
                 } );
+            }
+
+            const hasActiveChild = $('#tax-'+category).find('ul a.uk-active').length > 0;
+
+            if (hasActiveChild) {
+                $('#tax-'+category +' > a span').addClass('red');
+            } else {
+                $('#tax-'+category +' > a span').removeClass('red');
             }
         },
 
@@ -141,15 +149,15 @@ window.vad = window.vad || {};
 
             jQuery.ajax({
                 type: 'POST',
-                url: bs_data.ajaxurl,
+                url: filter_data.ajaxurl,
                 context: this,
                 data: Object.assign(data, {
-                    action: bs_data.action,
+                    action: filter_data.action,
                     filter: this.filters,
                     metas: this.metas,
                     s: this.__getSearch(),
-                    query_args: bs_data.query_args,
-                    _ajax_list_nonce:bs_data.ajaxnonce
+                    query_args: filter_data.query_args,
+                    security:filter_data.nonce
                 } ),
                 success: function(res) {
                     res = JSON.parse(res);

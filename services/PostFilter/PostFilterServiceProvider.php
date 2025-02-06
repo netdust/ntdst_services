@@ -16,10 +16,12 @@ class PostFilterServiceProvider extends ServiceProvider
 
     public function register() {
         // make template methods easly avialable
-        $this->container->get( TemplateServiceProvider::class )->add(dirname(__FILE__ ).'/templates/' );
-        $this->container->get( TemplateServiceProvider::class )->template_mixin( $this );
-
-        //$this->make( 'post_filter',  ['post_type'=>'post','exclude_cat'=>'category,language'] );
+        $this->container->get( TemplateServiceProvider::class )->template_mixin(
+            $this,
+            $this->container->get( TemplateServiceProvider::class )->make(
+                dirname(__FILE__ ) . '/templates/'
+            )
+        );
     }
 
     public function boot() {
@@ -47,11 +49,14 @@ class PostFilterServiceProvider extends ServiceProvider
     }
 
     public function make( string $name, array $param ): PostFilter {
+
         $factory = $param['class'] ?? PostFilter::class;
+        $provider = $param['provider'] ?? $this;
+
         $this->container->singleton(
-            $name,
-            new $factory( $this, $param ), ['register']
+            $name, new $factory( $provider, $param )
         );
+        $this->container->get( $name )->register();
         return $this->container->get( $name );
     }
 

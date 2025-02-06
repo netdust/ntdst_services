@@ -16,6 +16,16 @@ class SettingsServiceProvider extends ServiceProvider
     }
 
     public function boot() {
+
+        $asset = plugin_dir_url( __FILE__ ) . 'assets/settings.js';
+        $this->container->get( AssetManager::class )->script(
+            'settings-js', $asset,  ['ver'=>'0.1','to'=>['admin']]
+        );
+
+        $asset = plugin_dir_url( __FILE__ ) . 'assets/settings.css';
+        $this->container->get( AssetManager::class )->style(
+            'settings-css', $asset,  ['ver'=>'0.1','to'=>['admin']]
+        );
     }
 
     public function make( string $name, array $param ): Settings {

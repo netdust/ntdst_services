@@ -6,9 +6,9 @@ namespace Netdust\Services\PostFilter;
 use Netdust\Core\File;
 use Netdust\Core\ServiceProvider;
 use Netdust\Http\URL;
-use Netdust\Logger\Logger;
 use Netdust\Service\Assets\AssetManager;
-use Netdust\Traits\Setters;
+use Netdust\Service\Assets\Script;
+
 
 class PostFilter
 {
@@ -24,9 +24,8 @@ class PostFilter
     public string $publish = '';
     public array $order_by = [];
     public string $exclude_cat = '';
-    public string $template = '';
     private string $action = 'post_filter';
-    private string $nonce = 'post_filter_nonce';
+    private Script $script;
 
     protected function set( array &$args ): void {
         // Override default params.
@@ -84,7 +83,10 @@ class PostFilter
         }, 10, 3);
 
         add_action( 'wp_head', [$this,'add_noindexmeta_tags']);
+
         $this->add_ajax();
+        $this->register_script();
+
     }
 
     protected function do_query( array $filter ): string {
@@ -101,19 +103,12 @@ class PostFilter
             $this->get( 'post_type' )
         );
 
-        $prefix = $this->get( 'template', '' );
-
         if( is_admin() && defined('DOING_AJAX') && DOING_AJAX ) {
 
             wp_reset_postdata();
             wp_reset_query();
 
-            $template = 'filter_result';
-            if( $this->provider->exists( $prefix . $template ) ) {
-                $template = $prefix . $template;
-            }
-
-            $result_html = $this->provider->render( $template, [
+            $result_html = $this->render( 'filter_result', [
                 'results'=> $query,
             ]);
 
@@ -128,13 +123,7 @@ class PostFilter
         }
         else {
 
-            $template = 'filter';
-
-            if( $this->provider->exists( $prefix . $template ) ) {
-                $template = $prefix . $template;
-            }
-            
-            return $this->provider->render(  $template, [
+            return $this->render(  'filter', [
                 'taxonomies'=>$taxonomies,
                 'metas'=>$metas,
                 'results'=>$query,
@@ -143,6 +132,10 @@ class PostFilter
             ] );
 
         }
+    }
+
+    protected function render(string $template_name, array $data = []):string {
+        return $this->provider->render( 'filter/' . $template_name, $data );
     }
 
     public function custom_pagination( $total_pages, $posttype ) {
@@ -246,10 +239,11 @@ class PostFilter
 
     public function filter_products(): string {
 
+        $this->enqueue_script( );
+
         do_action( 'postfilter:before_filter', $this );
 
         $this->taxonomies = $this->get_taxonomies( );
-        $this->enqueue( );
 
         $args = $this->update_filter( [
             'post_type' => $this->get('post_type', 'post' ) ,
@@ -270,7 +264,7 @@ class PostFilter
     }
 
     public function filter_products_ajax(): void {
-        check_ajax_referer( $this->action );
+        check_ajax_referer( $this->action.'-security', 'security' );
         $this->query_args = $_REQUEST['query_args'];
         $this->set( $this->query_args );
         $this->filter_products();
@@ -374,23 +368,37 @@ class PostFilter
         return apply_filters( 'postfilter:get_query', array_merge($filters, $_REQUEST['filter'] ?? $_GET ) );
     }
 
-    public function enqueue( ): void {
-        // enqueue and localize script
-        $asset = $this->provider->app( File::class )->asset_url( 'js', 'filter.js' );
-        $script = $this->provider->app( AssetManager::class )->script(
-            'filter-js', $asset,  ['deps'=> ['jquery'], 'ver'=>'0.1'], false
-        );
 
-        $script->setLocalization( 'vad_data', [
+    public function enqueue_script( ): void {
+        $this->script->setLocalizedVar( 'filter_data', [
             'filters'=> json_encode( $this->get_filters() ),
             'metas'=> json_encode( $this->get_metas() ),
             'query_args' => $this->get( 'query_args' ),
             'ajaxurl'=> admin_url( 'admin-ajax.php' ),
             'action'=> $this->action,
-            'nonce'=>wp_create_nonce( $this->action )
+            'nonce'=>wp_create_nonce( $this->action .'-security' )
         ]);
 
-        $script->register();
+        wp_enqueue_script( $this->script->getHandle() );
+        $this->script->localize();
+    }
+    public function register_script( ): void {
+        // enqueue and localize script
+        $asset = plugin_dir_url( __FILE__ ) . 'assets/filter.js';
+        $this->script =  \Netdust\App::get( AssetManager::class )->script(
+            'filter-js', $asset,  ['deps'=> ['jquery'], 'footer'=>true, 'ver'=>'0.1.1'], false
+        );
+
+        add_action('wp_enqueue_scripts', function() {
+            wp_register_script(
+                $this->script->getHandle(),
+                $this->script->getUrl(),
+                $this->script->getDependencies(),
+                $this->script->getVersion(),
+                $this->script->getInFooter()
+            );
+        });
+
     }
 
     //search ACF fields
