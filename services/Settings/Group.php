@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace Netdust\Services\Settings;
 
+use Netdust\Logger\Logger;
+
 /**
  * Group class
  */

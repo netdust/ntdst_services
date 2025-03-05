@@ -22,6 +22,7 @@ defined( 'ABSPATH' ) || exit;
 add_action( 'application/register', '_load_netdustservices', 99 );
 function _load_netdustservices( \Netdust\ApplicationProvider $app ) {
     $path = dirname(__FILE__). '/register/';
+
     if (is_dir($path) && $app->name == 'VADPlatform' ) {
         foreach (glob($path . '*.php') as $file) {
             call_user_func(function ($bootstrap) use ( $app ) {

@@ -3,9 +3,10 @@
 namespace Netdust\Services\PostFilter;
 
 
-use Netdust\Core\File;
 use Netdust\Core\ServiceProvider;
+use Netdust\Http\Request;
 use Netdust\Http\URL;
+use Netdust\Logger\Logger;
 use Netdust\Service\Assets\AssetManager;
 use Netdust\Service\Assets\Script;
 
@@ -23,11 +24,11 @@ class PostFilter
     public array $query_args = [];
     public string $publish = '';
     public array $order_by = [];
+    public string $id = '';
     public string $exclude_cat = '';
-    private string $action = 'post_filter';
     private Script $script;
 
-    protected function set( array &$args ): void {
+    public function set( array $args ): void {
         // Override default params.
         foreach ( $args as $name  => $value ) {
             if( property_exists($this, $name) ) {
@@ -36,17 +37,16 @@ class PostFilter
         }
     }
 
-    protected function get( string $name, mixed $default='' ): mixed {
+    public function get( string $name, mixed $default='' ): mixed {
         if( $name=='post_type' && !empty( $_REQUEST['post_type'] ) ) {
             return $_REQUEST['post_type'];
         }
-        if( $name=='query_args' && !empty( $_REQUEST['query_args'] ) ) {
-            return $_REQUEST['query_args'];
-        }
 
         // acf
+        /*
         if(  function_exists( 'get_field') && !is_wp_error($value = get_field( $name ))  &&  !empty( $value ) )
             return $value;
+        */
 
         if( !is_wp_error($value = $this->{$name}) && !empty( $value ) )
             return $value;
@@ -69,9 +69,17 @@ class PostFilter
 
     }
 
+    public function add_nocache_headers(): void {
+
+        if ( (is_home()||is_archive()) && count( $this->get_query() ) > 0 && !array_key_exists('post-type', $this->get_query()) ) {
+            nocache_headers();
+        }
+
+    }
+
     public function add_ajax(): void {
-        add_action('wp_ajax_'.$this->action, [$this, 'filter_products_ajax']);
-        add_action('wp_ajax_nopriv_'.$this->action, [$this, 'filter_products_ajax']);
+        add_action('wp_ajax_'.$this->get('id'), [$this, 'filter_products_ajax']);
+        add_action('wp_ajax_nopriv_'.$this->get('id'), [$this, 'filter_products_ajax']);
     }
 
     public function register(): void {
@@ -82,10 +90,12 @@ class PostFilter
             return URL::basePath() . '/?'.$slug.'='.$term->slug;
         }, 10, 3);
 
+        add_action( 'init', [$this,'add_nocache_headers']);
         add_action( 'wp_head', [$this,'add_noindexmeta_tags']);
 
-        $this->add_ajax();
         $this->register_script();
+        $this->add_ajax();
+
 
     }
 
@@ -221,7 +231,6 @@ class PostFilter
             }
         }
 
-
         if (isset( $filter['meta_query'] ) && count( $filter['meta_query'] ) > 0 ) {
             $meta_query          = $filter['meta_query'];
             $filter['meta_query'] = array( 'relation' => 'OR' );
@@ -233,13 +242,19 @@ class PostFilter
     }
 
     public function echo_template(): void {
-        $this->set( $this->query_args );  // if we have query_args set them now or it's to late
+
+        nocache_headers();
+
+        if( !empty($this->query_args) && is_array($this->query_args)) {
+            $this->set( $this->query_args );
+        }
+
+        $this->enqueue_script( );
         echo $this->filter_products();
+
     }
 
     public function filter_products(): string {
-
-        $this->enqueue_script( );
 
         do_action( 'postfilter:before_filter', $this );
 
@@ -264,9 +279,10 @@ class PostFilter
     }
 
     public function filter_products_ajax(): void {
-        check_ajax_referer( $this->action.'-security', 'security' );
-        $this->query_args = $_REQUEST['query_args'];
-        $this->set( $this->query_args );
+        check_ajax_referer( $this->get('id').'-security', 'security' );
+        if( !empty($_REQUEST['query_args']) ) {
+            $this->set( $_REQUEST['query_args'] );
+        }
         $this->filter_products();
     }
 
@@ -309,6 +325,10 @@ class PostFilter
         return apply_filters( 'postfilter:get_taxonomies', $taxonomies );
     }
 
+    /**
+     * get structured array with filter parameters for wp_query
+     * these will be added to meta_query
+     */
     public function get_metas( ){
         $filters_arr=[];
         $filters = $this->get_filters();
@@ -325,7 +345,7 @@ class PostFilter
 
     /**
      * get structured array with filter parameters for wp_query
-     * only param that are also a taxonomy will be added
+     * these will be added to tax_query
      * @return array
      */
     public function get_filters( ){
@@ -375,8 +395,8 @@ class PostFilter
             'metas'=> json_encode( $this->get_metas() ),
             'query_args' => $this->get( 'query_args' ),
             'ajaxurl'=> admin_url( 'admin-ajax.php' ),
-            'action'=> $this->action,
-            'nonce'=>wp_create_nonce( $this->action .'-security' )
+            'action'=> $this->get('id'),
+            'nonce'=>wp_create_nonce( $this->get('id') .'-security' )
         ]);
 
         wp_enqueue_script( $this->script->getHandle() );
@@ -402,6 +422,7 @@ class PostFilter
     }
 
     //search ACF fields
+    //deprecated
     public function search_custom_meta_acf_alter_search($search,$qry) {
         global $wpdb;
         remove_filter('posts_search',[$this,'search_custom_meta_acf_alter_search'],1);

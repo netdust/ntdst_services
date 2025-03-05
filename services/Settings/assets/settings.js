@@ -15,12 +15,18 @@ window.ntdst = window.ntdst || {};
                 const parent = header.closest(".setting-group");
 
                 if (parent) {
-                    const headerHeight = header.offsetHeight; // Get header height
+                    const headerHeight = header.offsetHeight +25; // Get header height
 
                     // Set initial styles
                     parent.style.overflow = "hidden";
                     parent.style.transition = "height 0.3s ease-in-out";
-                    parent.style.height = `${parent.scrollHeight}px`; // Fully expanded by default
+
+                    // Check if the group should start collapsed
+                    if (parent.classList.contains("collapsed")) {
+                        parent.style.height = `${headerHeight}px`; // Start collapsed
+                    } else {
+                        parent.style.height = `${parent.scrollHeight}px`; // Fully expanded
+                    }
 
                     header.addEventListener("click", () => {
                         if (parent.classList.contains("collapsed")) {
@@ -43,7 +49,6 @@ window.ntdst = window.ntdst || {};
                 }
             });
         }
-
     };
 
     document.addEventListener("DOMContentLoaded", () => {

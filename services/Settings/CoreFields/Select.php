@@ -53,6 +53,8 @@ class Select
 		}
 
 		echo '</select>';
+
+        echo $field->addon('action') ??'';
 	}
 
 	/**

@@ -24,7 +24,7 @@ class SettingsServiceProvider extends ServiceProvider
 
         $asset = plugin_dir_url( __FILE__ ) . 'assets/settings.css';
         $this->container->get( AssetManager::class )->style(
-            'settings-css', $asset,  ['ver'=>'0.1','to'=>['admin']]
+            'settings-css', $asset,  ['ver'=>'0.2','to'=>['admin']]
         );
     }
 

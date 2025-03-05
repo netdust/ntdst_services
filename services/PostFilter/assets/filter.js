@@ -135,9 +135,9 @@ window.vad = window.vad || {};
             const hasActiveChild = $('#tax-'+category).find('ul a.uk-active').length > 0;
 
             if (hasActiveChild) {
-                $('#tax-'+category +' > a span').addClass('red');
+                $('#tax-'+category +' > a').addClass('uk-active');
             } else {
-                $('#tax-'+category +' > a span').removeClass('red');
+                $('#tax-'+category +' > a').removeClass('uk-active');
             }
         },
 

@@ -29,10 +29,10 @@ class PostFilterServiceProvider extends ServiceProvider
 
         add_shortcode( 'post_filter', function( array $atts, string $content = ""  )  {
 
-            if( !empty( $atts['name'] ) ) {
+            if( !empty( $atts['id'] ) ) {
                 ob_start();
 
-                $filter = $this->container->get( $atts['name'] );
+                $filter = $this->container->get( $atts['id'] );
                 $filter->query_args = $atts;
 
                 $filter->echo_template();
@@ -48,16 +48,17 @@ class PostFilterServiceProvider extends ServiceProvider
 
     }
 
-    public function make( string $name, array $param ): PostFilter {
+    public function make( string $id, array $param ): PostFilter {
 
         $factory = $param['class'] ?? PostFilter::class;
         $provider = $param['provider'] ?? $this;
+        $param['id'] = $id;
 
-        $this->container->singleton(
-            $name, new $factory( $provider, $param )
-        );
-        $this->container->get( $name )->register();
-        return $this->container->get( $name );
+        $this->container->singleton(  $id, new $factory($provider, $param ) );
+        $this->container->get( $id )->register();
+
+        return $this->container->get( $id );
+
     }
 
 
