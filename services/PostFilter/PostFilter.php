@@ -205,12 +205,16 @@ class PostFilter
             }
         }
 
-        $filter['tax_query'] = apply_filters( 'postfilter:tax_query', $filter['tax_query'], $this->get('post_type', 'post' ) );
+
 
         if (isset( $filter['tax_query'] ) && count( $filter['tax_query'] ) > 0 ) {
+
+            $filter['tax_query'] = apply_filters( 'postfilter:tax_query', $filter['tax_query'], $this->get('post_type', 'post' ) );
+
             $tax_query           = $filter['tax_query'];
             $filter['tax_query'] = array( 'relation' => 'AND' );
             $filter['tax_query'] = array_merge( $filter['tax_query'], $tax_query );
+
         }
 
 
@@ -234,12 +238,16 @@ class PostFilter
         }
 
         if (isset( $filter['meta_query'] ) && count( $filter['meta_query'] ) > 0 ) {
+            $filter['meta_query'] = apply_filters( 'postfilter:meta_query', $filter['meta_query'], $this->get('post_type', 'post' ) );
+
             $meta_query          = $filter['meta_query'];
             $filter['meta_query'] = array( 'relation' => 'OR' );
             $filter['meta_query'] = array_merge( $filter['meta_query'], $meta_query );
+
+
         }
 
-        $filter['meta_query'] = apply_filters( 'postfilter:meta_query', $filter['meta_query'], $this->get('post_type', 'post' ) );
+
 
         return $filter;
 
