@@ -205,6 +205,8 @@ class PostFilter
             }
         }
 
+        $filter['tax_query'] = apply_filters( 'postfilter:tax_query', $filter['tax_query'], $this->get('post_type', 'post' ) );
+
         if (isset( $filter['tax_query'] ) && count( $filter['tax_query'] ) > 0 ) {
             $tax_query           = $filter['tax_query'];
             $filter['tax_query'] = array( 'relation' => 'AND' );
@@ -213,7 +215,7 @@ class PostFilter
 
 
         //add filter out no wanted metas
-        $exclude_meta = apply_filters( 'postfilter:meta_exclude',['s'] );
+        $exclude_meta = apply_filters( 'postfilter:meta_exclude', ['s'] );
         $filter_request = array_diff_key($this->get_metas( ), array_combine($exclude_meta, array_fill(0, count($exclude_meta), [])) );
 
         //add meta filters
@@ -236,6 +238,8 @@ class PostFilter
             $filter['meta_query'] = array( 'relation' => 'OR' );
             $filter['meta_query'] = array_merge( $filter['meta_query'], $meta_query );
         }
+
+        $filter['meta_query'] = apply_filters( 'postfilter:meta_query', $filter['meta_query'], $this->get('post_type', 'post' ) );
 
         return $filter;
 
