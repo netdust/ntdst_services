@@ -24,7 +24,7 @@ $attrs_image['class'][] = 'uk-text-center';
             <span class="my_term-archive uk-text-small uk-text-emphasis uk-text-normal" style="font-size: .8rem;"><?= $template->get_param('meta', '' ); ?></span><br><?= $template->get_param('title', null ); ?>
         </h3>
 
-        <div class="el-content uk-panel uk-text-small uk-margin-small-top"><?= substr( $template->get_param('excerpt', null ), 0, 240 ); ?>...</div>
+        <div class="el-content uk-panel uk-text-small uk-margin-small-top"><?= $template->get_param('excerpt', null ); ?></div>
 
     </a>
 </div>

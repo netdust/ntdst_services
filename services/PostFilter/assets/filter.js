@@ -65,6 +65,8 @@ window.vad = window.vad || {};
 
             $(window).on("popstate", this.handleBackButton.bind(this));
 
+            //this.filterProducts();
+
         },
 
         handleBackButton:function(e) {

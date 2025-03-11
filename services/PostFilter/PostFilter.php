@@ -20,6 +20,8 @@ class PostFilter
     public string $post_type;
 
     public array $taxonomies;
+    public array $filters;
+    public array $metas;
 
     public array $query_args = [];
     public string $publish = '';
@@ -99,14 +101,13 @@ class PostFilter
 
     }
 
-    protected function do_query( array $filter ): string {
+    protected function do_query( array $filter, array $taxonomies, array $metas ): string {
 
-        $taxonomies = $this->get_taxonomies();
-        $metas = $this->get_metas();
-
-        $filter = apply_filters('postfilter:query', $filter );
+        $filter = apply_filters('postfilter:filter', $filter );
 
         $query = new \WP_Query( $filter );
+
+        do_action('postfilter:query', $query );
 
         $pagination = $this->custom_pagination(
             $query->max_num_pages,
@@ -206,10 +207,9 @@ class PostFilter
         }
 
 
+        $filter['tax_query'] = apply_filters( 'postfilter:tax_query', $filter['tax_query'], $this->get('post_type', 'post' ) );
 
         if (isset( $filter['tax_query'] ) && count( $filter['tax_query'] ) > 0 ) {
-
-            $filter['tax_query'] = apply_filters( 'postfilter:tax_query', $filter['tax_query'], $this->get('post_type', 'post' ) );
 
             $tax_query           = $filter['tax_query'];
             $filter['tax_query'] = array( 'relation' => 'AND' );
@@ -217,6 +217,14 @@ class PostFilter
 
         }
 
+        if( empty( $filter['tax_query'] ) ) {
+            unset(  $filter['tax_query'] );
+        }
+
+
+        if ( ! isset( $filter['meta_query'] ) ) {
+            $filter['meta_query'] = [];
+        }
 
         //add filter out no wanted metas
         $exclude_meta = apply_filters( 'postfilter:meta_exclude', ['s'] );
@@ -237,14 +245,20 @@ class PostFilter
             }
         }
 
+
+        $filter['meta_query'] = apply_filters( 'postfilter:meta_query', $filter['meta_query'], $this->get('post_type', 'post' ) );
+
+
         if (isset( $filter['meta_query'] ) && count( $filter['meta_query'] ) > 0 ) {
-            $filter['meta_query'] = apply_filters( 'postfilter:meta_query', $filter['meta_query'], $this->get('post_type', 'post' ) );
 
             $meta_query          = $filter['meta_query'];
             $filter['meta_query'] = array( 'relation' => 'OR' );
             $filter['meta_query'] = array_merge( $filter['meta_query'], $meta_query );
 
+        }
 
+        if( empty( $filter['meta_query'] ) ) {
+            unset(  $filter['meta_query'] );
         }
 
 
@@ -262,6 +276,19 @@ class PostFilter
         }
 
         $this->enqueue_script( );
+
+        $this->taxonomies = $this->get_taxonomies( );
+        $this->metas = $this->get_metas();
+
+        /*
+        echo $this->render(  'filter', [
+            'taxonomies'=>$this->taxonomies,
+            'metas'=>$this->metas,
+            'results'=>null,
+            'page'=>null,
+            's'=>$_REQUEST['s']??'',
+        ] );*/
+
         echo $this->filter_products();
 
     }
@@ -271,22 +298,26 @@ class PostFilter
         do_action( 'postfilter:before_filter', $this );
 
         $this->taxonomies = $this->get_taxonomies( );
+        $this->metas = $this->get_metas();
 
-        $args = $this->update_filter( [
-            'post_type' => $this->get('post_type', 'post' ) ,
+        $args = $this->update_filter([
+            'post_type' => $this->get('post_type', 'post'),
 
-            'post_status'  => $this->get('publish', 'publish' ),
-            'orderby'      =>  $this->get( 'order_by', [
+            'post_status' => $this->get('publish', 'publish'),
+            'orderby' => $this->get('order_by', [
 
-                'menu_order'=>'DESC',
-                'date'=>'DESC',
-                'title'=>'ASC'
+                'menu_order' => 'DESC',
+                'date' => 'DESC',
+                'title' => 'ASC'
 
-            ] ),
-            'paged'        => (get_query_var('paged')) ? get_query_var('paged') : 1
-        ] );
+            ]),
 
-        return $this->do_query( $args );
+            'paged' => (get_query_var('paged')) ? get_query_var('paged') : 1
+        ]);
+
+
+
+        return $this->do_query( $args, $this->taxonomies, $this->metas );
 
     }
 
@@ -303,7 +334,7 @@ class PostFilter
      * get structured array with taxonomies and terms
      * @return array
      */
-    public function get_taxonomies( ) {
+    public function get_taxonomies( ): array {
 
         if( isset( $this->taxonomies ) ) {
             return $this->taxonomies;
@@ -341,13 +372,18 @@ class PostFilter
      * get structured array with filter parameters for wp_query
      * these will be added to meta_query
      */
-    public function get_metas( ){
+    public function get_metas( ): array{
+
+        if( isset( $this->metas ) ) {
+            return  $this->metas;
+        }
+
         $filters_arr=[];
-        $filters = $this->get_filters();
+        $this->filters = $this->get_filters();
 
         $request = array_merge( $_REQUEST['metas']??[], $_GET );
         foreach( $request as $category => $value ) {
-            if( !isset( $filters[$category] ) ) {
+            if( !isset( $this->filters[$category] ) ) {
                 $filters_arr[$category] = $value;
             }
         }
@@ -360,7 +396,11 @@ class PostFilter
      * these will be added to tax_query
      * @return array
      */
-    public function get_filters( ){
+    public function get_filters( ): array {
+
+        if( isset( $this->filters ) ) {
+            return  $this->filters;
+        }
 
         $filters_arr=[];
         $filters = $this->get_query();
@@ -418,7 +458,7 @@ class PostFilter
         // enqueue and localize script
         $asset = plugin_dir_url( __FILE__ ) . 'assets/filter.js';
         $this->script =  \Netdust\App::get( AssetManager::class )->script(
-            'filter-js', $asset,  ['deps'=> ['jquery'], 'footer'=>true, 'ver'=>'0.1.1'], false
+            'filter-js', $asset,  ['deps'=> ['jquery'], 'footer'=>true, 'ver'=>'0.3'], false
         );
 
         add_action('wp_enqueue_scripts', function() {

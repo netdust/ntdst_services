@@ -15,7 +15,7 @@ $results = $template->get_param('results', null );
 <div class="uk-child-width-1-1 uk-child-width-1-2@s uk-child-width-1-3@m uk-grid-small uk-grid-match uk-grid" uk-grid uk-scrollspy="target: [uk-scrollspy-class]; cls: uk-animation-slide-bottom-medium; delay: false;">
 
 <?php
-if($results->have_posts()) {
+if(!empty($results) && $results->have_posts()) {
     while($results->have_posts()) {
         $results->the_post();
         $post = get_post();

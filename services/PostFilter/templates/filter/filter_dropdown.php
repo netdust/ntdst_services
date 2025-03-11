@@ -9,6 +9,7 @@ if ( ! isset( $template ) ) {
 }
 
 $taxonomies = $template->get_param('taxonomies',[] );
+$search = $template->get_param('s','' );
 $count = count ( $taxonomies );
 
 ?>
@@ -18,8 +19,7 @@ $count = count ( $taxonomies );
         <div>
             <form action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" method="post" role="search" class="uk-form uk-search uk-search-default uk-width-1-1">
                 <button uk-search-icon class="uk-search-icon-flip uk-icon uk-search-icon" aria-label="Submit Search"></button>
-                <input type="hidden" name="filter_excl_categories" value="product_cat,product_type">
-                <input value="" name="s" type="search" placeholder="Search" class="uk-search-input">
+                <input value="<?= $search; ?>" name="s" type="search" placeholder="Search" class="uk-search-input">
             </form>
         </div>
         <div uk-navbar="mode: click" class="ntdst-categories">

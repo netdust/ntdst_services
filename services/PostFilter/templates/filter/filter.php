@@ -21,7 +21,7 @@ $layout  = $template->get_param('layout', null );
 <?= $template->render( 'filter/filter_dropdown', [ 'taxonomies'=>$taxonomies, 's'=>$s ] ); ?>
 </div>
 
-<div class="uk-text-meta uk-heading-line uk-text-center"><span>Gevonden aantal resultaten: <span id="result-count"><?= $results->found_posts; ?></span></span></div>
+<div class="uk-text-meta uk-heading-line uk-text-center"><span>Gevonden aantal resultaten: <span id="result-count"><?= !empty($results)?$results->found_posts:'...'; ?></span></span></div>
 
 <div class="ntdst-filter-results uk-margin-large-top">
 
