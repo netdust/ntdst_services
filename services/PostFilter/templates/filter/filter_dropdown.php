@@ -45,5 +45,10 @@ $count = count ( $taxonomies );
                 <?php endforeach; ?>
             </ul>
         </div>
+        <div>
+            <ul class="uk-subnav uk-margin-top uk-margin-remove-bottom uk-text-small filter-active">
+
+            </ul>
+        </div>
     </div>
 </nav>

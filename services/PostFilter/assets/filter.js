@@ -58,7 +58,8 @@ window.vad = window.vad || {};
         addListeners: function () {
 
             /** Page actions **/
-            $(document).on('click', '.filter-item, .remove-filter-item',  this.handleFilterClick.bind(this));
+            $(document).on('click', '.filter-item, .filter-active a',  this.handleFilterClick.bind(this));
+
 
             $(document).on('keyup', 'form.uk-search .uk-search-input',  this.handleKeyUp.bind(this));
             $(document).on('click', 'form.uk-search .uk-search-icon',  this.handleSearchClick.bind(this));
@@ -94,7 +95,6 @@ window.vad = window.vad || {};
             e.preventDefault();
 
             const button = $(e.currentTarget);
-            button.toggleClass('uk-active');
 
             this.editFilterInputs(button.data('cat'), button.data('term'), button.data('label'));
             this.filterProducts();
@@ -126,21 +126,22 @@ window.vad = window.vad || {};
         },
 
         editFilterLabels: function( category ) {
-            $('.filter-active').empty();
 
+            $('#tax-'+category+' a').removeClass('uk-active');
             if( this.filters.hasOwnProperty(category) && this.filters[category] != null ) {
                 Object.entries(this.filters[category]).forEach(([key, value]) => {
                     $('#tax-'+category+' a.filter-item[data-term="'+key+'"]').addClass('uk-active');
                 } );
             }
 
-            const hasActiveChild = $('#tax-'+category).find('ul a.uk-active').length > 0;
+            $('.filter-active').empty();
+            $('.ntdst-categories').find('a.uk-active').each(function () {
+                let value = $(this).text().trim();
+                $('.filter-active').prepend(
+                    '<li><a href="#" uk-icon="icon: close; ratio: .5" data-term="'+ $(this).data('term') +'" data-cat="'+ $(this).data('cat') +'" data-label="'+ $(this).data('label') +'" >' + value + '</a></li>'
+                );
+            });
 
-            if (hasActiveChild) {
-                $('#tax-'+category +' > a').addClass('uk-active');
-            } else {
-                $('#tax-'+category +' > a').removeClass('uk-active');
-            }
         },
 
         filterProducts: function( data ) {
