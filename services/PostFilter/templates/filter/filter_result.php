@@ -35,7 +35,7 @@ if(!empty($results) && $results->have_posts()) {
             'content'=>get_the_content(),
             'excerpt'=>get_the_excerpt(),
             'permalink'=>get_the_permalink(),
-            'image'=>!empty(get_field('secondary_image' ))  ? get_field('secondary_image' ) : get_the_post_thumbnail_url( ),
+            'image'=>get_the_post_thumbnail_url( ),
             'score'=>$post->relevance_score,
             'meta'=>$terms_string,
             'date'=>get_the_date('j M Y'),

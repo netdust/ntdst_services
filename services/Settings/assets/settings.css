@@ -22,6 +22,14 @@
     background-color: #f9fbff;
     min-height: 85px;
 }
+.ntdst-box {
+    padding: 15px;
+    margin-top: 5px;
+    color: #23282d;
+    background: #fff;
+    font-size: 13px;
+    line-height: 1.5;
+}
 
 .ntdst-logo {
     float: left;
@@ -52,7 +60,7 @@
 .ntdst-settings .box h3 {
     margin-top: 0;
 }
-.ntdst-settings .setting-col {
+.ntdst-settings .menu-col + .setting-col {
     font-size: 15px;
     margin-left: 320px;
 }
@@ -63,10 +71,15 @@
 .ntdst-settings .setting-col .setting-group {
     margin-bottom: 2em;
 }
+.ntdst-settings .setting-col .setting-group:has( + .setting-group .ntdst-box ) {
+    margin-bottom: 0;
+}
 .ntdst-settings .setting-col .setting-group {
     transition: height 0.3s ease-in-out;
     overflow: hidden;
 }
+
+setting-group
 
 .ntdst-settings .setting-col .setting-group:last-child {
     margin-bottom: 0;

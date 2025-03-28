@@ -9,6 +9,7 @@
 namespace Netdust\Services\Settings;
 
 use Netdust\App;
+use Netdust\Logger\Logger;
 
 /**
  * Settings class
@@ -152,15 +153,18 @@ class Settings
 		$toSave = [];
 
 		foreach ($settings as $sectionSlug => $groupsValues) {
-			foreach ($this->getSection($sectionSlug)->getGroups() as $group) {
-				foreach ($group->getFields() as $field) {
-					$value = isset($groupsValues[$field->group()][$field->slug()])
-						? $field->sanitize($groupsValues[$field->group()][$field->slug()])
-						: '';
 
-					$toSave[$field->section()][$field->group()][$field->slug()] = $value;
-				}
-			}
+            if( !empty($section = $this->getSection($sectionSlug)) ) {
+                foreach ($section->getGroups() as $group) {
+                    foreach ($group->getFields() as $field) {
+                        $value = isset($groupsValues[$field->group()][$field->slug()])
+                            ? $field->sanitize($groupsValues[$field->group()][$field->slug()])
+                            : '';
+
+                        $toSave[$field->section()][$field->group()][$field->slug()] = $value;
+                    }
+                }
+            }
 		}
 
 		foreach ($toSave as $section => $value) {
@@ -335,7 +339,7 @@ class Settings
                         $this->args['menu_title'],
                         $this->args['capability'],
                         $this->args['menu_slug'],
-                        [ $this, 'settingsPage' ],
+                        $this->args['callback'] ?? [ $this, 'settingsPage' ],
                         $this->args['icon'],
                         $this->args['position']
                     );
@@ -345,7 +349,7 @@ class Settings
                         $this->args['menu_title'],
                         $this->args['capability'],
                         $this->args['menu_slug'],
-                        [ $this, 'settingsPage' ],
+                        $this->args['callback'] ?? [ $this, 'settingsPage' ],
                         $this->args['position']
                     );
                 }
