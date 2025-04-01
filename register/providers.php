@@ -10,7 +10,7 @@ return function ($app) {
      */
     $providers = [
         // Services
-        \Netdust\Services\PostFilter\PostFilterServiceProvider::class,
+        //\Netdust\Services\PostFilter\PostFilterServiceProvider::class,
         //\Netdust\Services\Security\SecurityServiceProvider::class,
         \Netdust\Services\Settings\SettingsServiceProvider::class,
         \Netdust\Services\Yootheme\YooThemeServiceProvider::class,
