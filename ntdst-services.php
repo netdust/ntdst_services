@@ -23,11 +23,9 @@ add_action( 'application/register', '_load_netdustservices', 99 );
 function _load_netdustservices( \Netdust\ApplicationProvider $app ) {
     $path = dirname(__FILE__). '/register/';
 
-    if (is_dir($path) && $app->name == 'voxluminis' ) {
-        foreach (glob($path . '*.php') as $file) {
-            call_user_func(function ($bootstrap) use ( $app ) {
-                $bootstrap($app);
-            }, require_once($file));
-        }
+    foreach (glob($path . '*.php') as $file) {
+        call_user_func(function ($bootstrap) use ( $app ) {
+            $bootstrap($app);
+        }, require_once($file));
     }
 }

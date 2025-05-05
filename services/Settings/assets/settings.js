@@ -6,6 +6,7 @@ window.ntdst = window.ntdst || {};
     exports.settings = {
         start() {
             this.setupView();
+
         },
 
         setupView() {
@@ -22,14 +23,14 @@ window.ntdst = window.ntdst || {};
                     parent.style.transition = "height 0.3s ease-in-out";
 
                     // Check if the group should start collapsed
-                    if (parent.classList.contains("collapsed")) {
+                    if (header.classList.contains("collapsed")) {
                         parent.style.height = `${headerHeight}px`; // Start collapsed
                     } else {
                         parent.style.height = `${parent.scrollHeight}px`; // Fully expanded
                     }
 
                     header.addEventListener("click", () => {
-                        if (parent.classList.contains("collapsed")) {
+                        if (header.classList.contains("collapsed")) {
                             // Expand
                             parent.style.height = `${parent.scrollHeight}px`;
                         } else {
@@ -37,12 +38,12 @@ window.ntdst = window.ntdst || {};
                             parent.style.height = `${headerHeight}px`;
                         }
 
-                        parent.classList.toggle("collapsed");
+                        header.classList.toggle("collapsed");
                     });
 
                     // Ensure correct height on page resize
                     window.addEventListener("resize", () => {
-                        if (!parent.classList.contains("collapsed")) {
+                        if (!header.classList.contains("collapsed")) {
                             parent.style.height = `${parent.scrollHeight}px`;
                         }
                     });

@@ -23,8 +23,9 @@ class Button
 	public function input($field)
 	{
 		echo sprintf(
-			'<a href="%s" class="button">%s</a>',
+			'<a href="%s" class="button %s">%s</a>',
 			esc_url_raw($field->addon('url')),
+            esc_html($field->addon('class')),
 			esc_html($field->addon('label'))
 		);
 	}
