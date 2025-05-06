@@ -54,7 +54,7 @@ class PostFilterServiceProvider extends ServiceProvider
         $provider = $param['provider'] ?? $this;
         $param['id'] = $id;
 
-        $this->container->singleton(  $id, new $factory($provider, $param ) );
+        $this->container->bind(  $id, new $factory($provider, $param ) );
         $this->container->get( $id )->register();
 
         return $this->container->get( $id );

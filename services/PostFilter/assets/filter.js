@@ -50,6 +50,12 @@ window.vad = window.vad || {};
                 });
             }
 
+            $.post(filter_data.ajaxurl, { action: 'get_nonce' }, function(response) {
+                if (response.success) {
+                    window.vadNonce = response.data.nonce;
+                }
+            });
+
         },
 
         /**
@@ -71,34 +77,51 @@ window.vad = window.vad || {};
         },
 
         handleBackButton:function(e) {
-            e.preventDefault();
-            this.filterProducts();
-            this.__updateUrl( );
-        },
-
-        handleKeyUp:function(e) {
-            if (13 === e.which) {
+            try {
                 e.preventDefault();
                 this.filterProducts();
                 this.__updateUrl( );
+            } catch (err) {
+                console.error('Error in handleBackButton:', err);
+            }
+        },
+
+        handleKeyUp:function(e) {
+            try {
+                if (13 === e.which) {
+                    e.preventDefault();
+                    this.filterProducts();
+                    this.__updateUrl( );
+                }
+            } catch (err) {
+                console.error('Error in handleKeyUp:', err);
             }
         },
 
 
         handleSearchClick :function(e) {
-            e.preventDefault();
-            this.filterProducts();
-            this.__updateUrl( );
+            try {
+                e.preventDefault();
+                this.filterProducts();
+                this.__updateUrl( );
+            } catch (err) {
+                console.error('Error in handleSearchClick:', err);
+            }
         },
 
         handleFilterClick :function(e) {
-            e.preventDefault();
+            try {
+                e.preventDefault();
 
-            const button = $(e.currentTarget);
+                const button = $(e.currentTarget);
 
-            this.editFilterInputs(button.data('cat'), button.data('term'), button.data('label'));
-            this.filterProducts();
-            this.__updateUrl( );
+                this.editFilterInputs(button.data('cat'), button.data('term'), button.data('label'));
+                this.filterProducts();
+                this.__updateUrl( );
+            } catch (err) {
+                console.error('Error in handleFilterClick:', err);
+            }
+
         },
 
         editFilterInputs :function(category, term, value) {
@@ -160,7 +183,7 @@ window.vad = window.vad || {};
                     metas: this.metas,
                     s: this.__getSearch(),
                     query_args: filter_data.query_args,
-                    security:filter_data.nonce
+                    security: window.vadNonce || filter_data.nonce
                 } ),
                 success: function(res) {
                     res = JSON.parse(res);
@@ -188,7 +211,8 @@ window.vad = window.vad || {};
 
             Object.assign( qry, this.metas  );
             Object.assign( qry, this.filters  );
-            if( search != '' ) {
+
+            if( search !== '' ) {
                 Object.assign( qry, { s: search }  );
             }
 

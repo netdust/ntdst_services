@@ -80,8 +80,18 @@ class PostFilter
     }
 
     public function add_ajax(): void {
+        add_action('wp_ajax_get_nonce',  [$this, 'get_filter_nonce']);
+        add_action('wp_ajax_nopriv_get_nonce',  [$this,'get_filter_nonce']); // Allow non-logged-in users too
+
         add_action('wp_ajax_'.$this->get('id'), [$this, 'filter_products_ajax']);
         add_action('wp_ajax_nopriv_'.$this->get('id'), [$this, 'filter_products_ajax']);
+
+
+    }
+
+    public function get_filter_nonce() {
+        $nonce = wp_create_nonce('filter-security');
+        wp_send_json_success(['nonce' => $nonce]);
     }
 
     public function register(): void {
@@ -322,7 +332,7 @@ class PostFilter
     }
 
     public function filter_products_ajax(): void {
-        check_ajax_referer( $this->get('id').'-security', 'security' );
+        check_ajax_referer( 'filter-security', 'security' );
         if( !empty($_REQUEST['query_args']) ) {
             $this->set( $_REQUEST['query_args'] );
         }
@@ -448,7 +458,7 @@ class PostFilter
             'query_args' => $this->get( 'query_args' ),
             'ajaxurl'=> admin_url( 'admin-ajax.php' ),
             'action'=> $this->get('id'),
-            'nonce'=>wp_create_nonce( $this->get('id') .'-security' )
+            //'nonce'=>wp_create_nonce( $this->get('id') .'-security' )
         ]);
 
         wp_enqueue_script( $this->script->getHandle() );
@@ -458,7 +468,7 @@ class PostFilter
         // enqueue and localize script
         $asset = plugin_dir_url( __FILE__ ) . 'assets/filter.js';
         $this->script =  \Netdust\App::get( AssetManager::class )->script(
-            'filter-js', $asset,  ['deps'=> ['jquery'], 'footer'=>true, 'ver'=>'0.3'], false
+            'filter-js', $asset,  ['deps'=> ['jquery'], 'footer'=>true, 'ver'=>'0.4'], false
         );
 
         add_action('wp_enqueue_scripts', function() {
