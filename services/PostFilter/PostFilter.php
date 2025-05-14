@@ -115,6 +115,8 @@ class PostFilter
 
         $filter = apply_filters('postfilter:filter', $filter );
 
+        Logger::debug( $filter );
+
         $query = new \WP_Query( $filter );
 
         do_action('postfilter:query', $query );
@@ -209,7 +211,7 @@ class PostFilter
                 $filter['tax_query'][] = [
                     'taxonomy' => $taxonomies[$category]['tax'],
                     'field' => 'name',
-                    'terms' => $terms,
+                    'terms' => array_keys($terms),
                     'include_children' => true,
                     'operator' => 'IN',
                 ];
@@ -219,7 +221,7 @@ class PostFilter
 
         $filter['tax_query'] = apply_filters( 'postfilter:tax_query', $filter['tax_query'], $this->get('post_type', 'post' ) );
 
-        if (isset( $filter['tax_query'] ) && count( $filter['tax_query'] ) > 0 ) {
+        if (isset( $filter['tax_query'] ) && count( $filter['tax_query'] ) > 1) {
 
             $tax_query           = $filter['tax_query'];
             $filter['tax_query'] = array( 'relation' => 'AND' );
@@ -258,8 +260,7 @@ class PostFilter
 
         $filter['meta_query'] = apply_filters( 'postfilter:meta_query', $filter['meta_query'], $this->get('post_type', 'post' ) );
 
-
-        if (isset( $filter['meta_query'] ) && count( $filter['meta_query'] ) > 0 ) {
+        if (isset( $filter['meta_query'] ) && count( $filter['meta_query'] ) > 1 ) {
 
             $meta_query          = $filter['meta_query'];
             $filter['meta_query'] = array( 'relation' => 'OR' );
