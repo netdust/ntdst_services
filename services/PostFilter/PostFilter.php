@@ -115,8 +115,6 @@ class PostFilter
 
         $filter = apply_filters('postfilter:filter', $filter );
 
-        Logger::debug( $filter );
-
         $query = new \WP_Query( $filter );
 
         do_action('postfilter:query', $query );
@@ -210,7 +208,7 @@ class PostFilter
             foreach ( $tax_filters as $category => $terms ) {
                 $filter['tax_query'][] = [
                     'taxonomy' => $taxonomies[$category]['tax'],
-                    'field' => 'name',
+                    'field' => 'slug',
                     'terms' => array_keys($terms),
                     'include_children' => true,
                     'operator' => 'IN',
