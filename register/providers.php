@@ -15,6 +15,7 @@ return function ($app) {
         \Netdust\Services\Settings\SettingsServiceProvider::class,
         \Netdust\Services\Yootheme\YooThemeServiceProvider::class,
         \Netdust\Services\Exporter\ExporterServiceProvider::class,
+        \Netdust\Services\Vite\ViteServiceProvider::class,
     ];
 
 
